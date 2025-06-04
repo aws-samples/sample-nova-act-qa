@@ -1,0 +1,76 @@
+name: Nova Act QA
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pyproject.toml
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+          python -m pip install --upgrade "nova-act>=1.0,<2.0"
+      
+      - name: Get installed Playwright version for caching
+        run: echo "PLAYWRIGHT_VERSION=$(python -m playwright --version | cut -d ' ' -f 2)" >> $GITHUB_ENV
+
+      - name: Cache Playwright
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+          restore-keys: ${{ runner.os }}-playwright-
+
+      - name: Install Playwright OS dependencies and chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: python -m playwright install --with-deps chromium
+
+      - name: Install Playwright OS dependencies only
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: python -m playwright install-deps
+
+      - name: Generate test identifier
+        run: |
+          TIMESTAMP=$(date +'%Y%m%d%H%M%S')
+          echo "UNIQUE_ID=${{ github.event_name }}-$TIMESTAMP-${{ github.run_id }}" >> $GITHUB_ENV
+
+      - name: Run tests
+        id: run_tests
+        continue-on-error: true
+        env:
+          NOVA_ACT_API_KEY: ${{ secrets.NOVA_ACT_API_KEY }}
+          NOVA_ACT_SKIP_PLAYWRIGHT_INSTALL: true
+          NOVA_ACT_CHROME_CHANNEL: chromium
+        run: |
+          REPORT_RELATIVE_PATH=reports/report-${{ env.UNIQUE_ID }}.html
+          echo "REPORT_ABSOLUTE_PATH=$GITHUB_WORKSPACE/$REPORT_RELATIVE_PATH" >> $GITHUB_ENV
+          CPUS=$(python -c "import multiprocessing as mp; print(mp.cpu_count())")
+          python -m pytest --html=$REPORT_RELATIVE_PATH -n $CPUS
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ env.UNIQUE_ID }}
+          path: ${{ env.REPORT_ABSOLUTE_PATH }}
+          overwrite: true
+
+      - name: Check test results
+        if: steps.run_tests.outcome != 'success'
+        run: exit 1

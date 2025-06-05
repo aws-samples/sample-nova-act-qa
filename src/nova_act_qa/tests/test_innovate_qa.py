@@ -7,7 +7,7 @@ from nova_act_qa.utils.nova_act import NovaAct
 def test_landing_page(nova: NovaAct):
     nova.test_bool("Am I on the Innovate QA landing page?")
     nova.test_str("Conference date", "June 5, 2025")
-    nova.test_str("Conference location", "Hilton Garden Inn 1800 NW Gilman Blvd Seattle, WA")
+    nova.test_str("Conference location", "Hilton Garden Inn 1800 NW Gilman Blvd Issaquah, WA")
 
 
 @pytest.mark.parametrize(

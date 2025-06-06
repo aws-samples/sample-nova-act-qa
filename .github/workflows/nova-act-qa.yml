@@ -1,8 +1,5 @@
 name: Nova Act QA
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main

@@ -69,6 +69,7 @@ jobs:
           NOVA_ACT_API_KEY: ${{ secrets.NOVA_ACT_API_KEY }}
           NOVA_ACT_SKIP_PLAYWRIGHT_INSTALL: true
           NOVA_ACT_CHROME_CHANNEL: chromium
+          NOVA_ACT_HEADLESS: true
         run: |
           REPORT_RELATIVE_PATH=reports/report-${{ env.UNIQUE_ID }}.html
           echo "REPORT_ABSOLUTE_PATH=$GITHUB_WORKSPACE/$REPORT_RELATIVE_PATH" >> $GITHUB_ENV

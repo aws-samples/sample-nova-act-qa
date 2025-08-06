@@ -19,9 +19,9 @@ from nova_act_qa.utils.nova_act import NovaAct
 
 @pytest.mark.parametrize("nova", ["https://innovateqaevents.com/"], indirect=True)
 def test_landing_page(nova: NovaAct):
-    nova.test_bool("Am I on the Innovate QA landing page?")
-    nova.test_str("Conference date", "June 5, 2025")
-    nova.test_str("Conference location", "Hilton Garden Inn 1800 NW Gilman Blvd Issaquah, WA")
+    nova.test_bool("Am I on the Innovate QA events landing page?")
+    nova.test_str("Find the Conference start date for Innovate QA 2025", "June 4, 2025")
+    nova.test_str("Find the hotel venue name for Innovate QA 2025", "Hilton Garden Inn")
 
 
 @pytest.mark.parametrize(

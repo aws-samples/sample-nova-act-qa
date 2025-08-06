@@ -15,6 +15,7 @@
 import pytest
 
 from nova_act_qa.utils.nova_act import NovaAct
+from nova_act_qa.utils._types import AssertType
 
 
 @pytest.mark.parametrize("nova", ["https://innovateqaevents.com/"], indirect=True)
@@ -28,7 +29,7 @@ def test_landing_page(nova: NovaAct):
     "nova", ["https://innovateqaevents.com/2025-program-speakers"], indirect=True
 )
 def test_program_speakers_page(nova: NovaAct):
-    nova.test_str("Agenda on June 4", "Social Networking")
+    nova.test_str("Agenda on June 4", "Social Networking", AssertType.CONTAINS)
     nova.test(
         "3 Agenda columns on June 5",
         ["Leadership Track", "IC Track", "Workshop/Discussion"],

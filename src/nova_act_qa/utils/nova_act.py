@@ -140,6 +140,11 @@ class NovaAct(_NovaAct):
 
 
 def start_nova_act(starting_page: str, module_name: str, func_name: str):
+    import os
+    
+    # Disable keyboard monitoring during pytest execution to prevent stdin warnings
+    os.environ["NOVA_ACT_DISABLE_KEYBOARD_MONITORING"] = "1"
+    
     logs_dir, user_data_dir = initialize_nova_act_directories(module_name, func_name)
 
     nova = NovaAct(

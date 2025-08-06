@@ -30,7 +30,9 @@ dependencies = [
 ]
 
 [tool.pytest.ini_options]
-filterwarnings = "ignore::pytest.PytestUnhandledThreadExceptionWarning"
+filterwarnings = [
+    "ignore::pytest.PytestUnhandledThreadExceptionWarning",
+]
 addopts = "-n auto --html=reports/report.html --self-contained-html --add-nova-act-report"
 
 

@@ -50,6 +50,12 @@ def nova(request: pytest.FixtureRequest):
     """
     test_module_name = request.module.__name__
     test_func_name = request.function.__name__
+    
+    # Include parameter info to make directory unique for parametrized tests
+    if hasattr(request, 'node') and hasattr(request.node, 'callspec'):
+        param_id = request.node.callspec.id
+        test_func_name = f"{test_func_name}_{param_id}"
+    
     starting_page = request.param
     nova = start_nova_act(starting_page, test_module_name, test_func_name)
     yield nova

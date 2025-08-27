@@ -138,6 +138,13 @@ class NovaAct(_NovaAct):
             prompt, expected, expected_schema=STRING_SCHEMA, assert_type=assert_type
         )
 
+    def check(self, condition: str) -> bool:
+        """
+        Checks a condition with a boolean JSON schema and returns the result
+        """
+        result = self.act(condition, schema=BOOL_SCHEMA)
+        return bool(self.is_result_valid(result))
+
 
 def start_nova_act(starting_page: str, module_name: str, func_name: str):
     import os

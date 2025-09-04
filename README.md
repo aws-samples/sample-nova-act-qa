@@ -161,7 +161,47 @@ See the [pytest-html](https://pytest-html.readthedocs.io/en/latest/) documentati
 
 ## Test Configuration
 
-The `pyproject.toml` file has a `[tool.pytest.ini_options]` section which defines the pytest configuration for the tests. This can be extended to customize your tests as needed.
+The `pyproject.toml` file has a `[tool.pytest.ini_options]` section which defines the pytest configuration for the tests. The default settings include:
+
+- `-n auto`: Automatically detects CPU cores and runs tests in parallel
+- `--dist loadgroup`: Distributes tests in the same group on the same worker to enable sequential runs
+- `--html=reports/report.html`: Defines the location to write the pytest HTML report
+- `--self-contained-html`: Creates a standalone HTML report file with embedded assets
+- `--add-nova-act-report`: Integrates Nova Act screenshots and logs into the HTML report
+
+This configuration can be extended to customize your tests as needed.
+
+### Test Grouping for Sequential Execution
+
+When using `pytest-xdist` for parallel execution, tests that need to share data or run sequentially can be grouped using the `@pytest.mark.xdist_group` decorator. This feature requires the `--dist loadgroup` option (configured by default) to ensure tests in the same group run on the same worker process in order.
+
+For example:
+
+```python
+@pytest.mark.xdist_group("test_group")
+def test_one():
+    pass
+
+@pytest.mark.xdist_group("test_group")
+def test_two():
+    pass
+```
+
+This ensures that dependent tests run sequentially while maintaining parallel execution for independent tests. See [test_share_data.py](src/nova_act_qa/tests/test_share_data.py) for an example of this. [See the pytest-xdist docs for more information](https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus).
+
+### Sharing Data Between Tests
+
+Pytest provides a built-in cache that allows tests to share data within the same test run. This is useful for storing data that one test extracts and another test consumes.
+
+```python
+def test_store_data(pytestconfig):
+    pytestconfig.cache.set("key", "value")
+
+def test_retrieve_data(pytestconfig):
+    data = pytestconfig.cache.get("key", "default")
+```
+
+> Note: When tests need to share data within the same test run, you must use the `@pytest.mark.xdist_group` decorator from the previous section to ensure they run on the same worker process. See [test_share_data.py](src/nova_act_qa/tests/test_share_data.py) for a complete example of data sharing between dependent tests using both the cache and xdist grouping.
 
 ## Test Automation
 

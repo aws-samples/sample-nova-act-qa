@@ -17,7 +17,7 @@ import pytest
 from nova_act_qa.utils.nova_act import NovaAct
 
 NOVA_ACT_URL = "https://nova.amazon.com/act"
-EXPECTED_BLOG_POST_TITLE = "Introducing Amazon Nova Act"
+EXPECTED_BLOG_POST_TITLE = "Useful, reliable agents from prototype to production"
 
 
 @pytest.mark.parametrize("nova", ["https://nova.amazon.com"], indirect=True)

@@ -276,6 +276,6 @@ Extend this repo and write your own tests in `src/noca_act_qa/tests`!
 
 ## Additional Resources
 
-- [Amazon Nova Act](https://novs.amazon.com/act)
+- [Amazon Nova Act](https://nova.amazon.com/act)
 - [Amazon Nova Act SDK](https://github.com/aws/nova-act)
 - [pytest-html-nova-act](https://pypi.org/project/pytest-html-nova-act/)
